@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@theme {
+  /* Custom theme values if needed, or use CSS variables mechanism of v4 */
+}
+
+@layer base {
+  body {
+    @apply bg-slate-900 text-white;
+  }
+}
