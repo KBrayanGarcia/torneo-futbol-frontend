@@ -1,37 +1,57 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Layout from './layouts/Layout';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthProvider';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import AdminLayout from './layouts/AdminLayout';
+import PublicLayout from './layouts/PublicLayout';
 import PlayerManager from './features/admin/PlayerManager';
 import TeamManager from './features/admin/TeamManager';
 import TournamentsList from './features/tournaments/TournamentsList';
 import TournamentCreator from './features/tournaments/TournamentCreator';
 import TournamentDetails from './features/tournaments/TournamentDetails';
-import Home from './features/home/Home';
 import PublicTournamentsList from './features/public/PublicTournamentsList';
 import PublicTournamentDetails from './features/public/PublicTournamentDetails';
+import { LoginPage } from './pages/LoginPage';
+import { DashboardPage } from './pages/DashboardPage';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Root Redirect */}
+          <Route path="/" element={<Navigate to="/public" replace />} />
 
-          {/* Admin Routes */}
-          <Route path="tournaments" element={<TournamentsList />} />
-          <Route path="tournaments/new" element={<TournamentCreator />} />
-          <Route path="tournaments/:id" element={<TournamentDetails />} />
-          <Route path="players" element={<PlayerManager />} />
-          <Route path="teams" element={<TeamManager />} />
+          {/* Login Route (Standalone) */}
+          <Route path="/login" element={<LoginPage />} />
 
-          {/* Public Routes */}
-          <Route path="public" element={<PublicTournamentsList />} />
+          {/* Public Routes (Public Layout) */}
+          <Route path="/public" element={<PublicLayout />}>
+            <Route index element={<PublicTournamentsList />} />
+            <Route
+              path="tournaments/:id"
+              element={<PublicTournamentDetails />}
+            />
+          </Route>
+
+          {/* Admin Routes (Protected + Admin Layout) */}
           <Route
-            path="public/tournaments/:id"
-            element={<PublicTournamentDetails />}
-          />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<DashboardPage />} />
+            <Route path="tournaments" element={<TournamentsList />} />
+            <Route path="tournaments/new" element={<TournamentCreator />} />
+            <Route path="tournaments/:id" element={<TournamentDetails />} />
+            <Route path="players" element={<PlayerManager />} />
+            <Route path="teams" element={<TeamManager />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

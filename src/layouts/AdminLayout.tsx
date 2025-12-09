@@ -1,19 +1,30 @@
-import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Users, Trophy, Shield, Home, Menu, X } from 'lucide-react';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Users, Trophy, Shield, Menu, X, LogIn, LogOut } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '../lib/utils';
 import { Button } from '../components/ui/button';
+import { useAuth } from '../hooks/useAuth';
 
-export default function Layout() {
+export default function AdminLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { isAuthenticated, user, logout } = useAuth();
 
   const navigation = [
-    { name: 'Inicio', href: '/', icon: Home },
-    { name: 'Torneos', href: '/tournaments', icon: Trophy },
-    { name: 'Jugadores', href: '/players', icon: Users },
-    { name: 'Equipos', href: '/teams', icon: Shield },
+    { name: 'Torneos', href: '/admin/tournaments', icon: Trophy },
+    { name: 'Equipos', href: '/admin/teams', icon: Shield },
+    { name: 'Jugadores', href: '/admin/players', icon: Users },
   ];
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
+  const handleLogin = () => {
+    navigate('/login');
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex">
@@ -28,14 +39,17 @@ export default function Layout() {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed lg:static inset-y-0 left-0 z-50 w-64 bg-slate-900 border-r border-slate-800 transition-transform duration-200 ease-in-out lg:transform-none lg:hidden',
+          'fixed lg:static inset-y-0 left-0 z-50 w-64 bg-slate-900 border-r border-slate-800 transition-transform duration-200 ease-in-out lg:translate-x-0',
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full',
         )}
       >
         <div className="h-16 flex items-center px-6 border-b border-slate-800">
-          <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+          <Link
+            to="/admin"
+            className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent"
+          >
             Plato Admin
-          </h1>
+          </Link>
           <Button
             variant="ghost"
             size="icon"
@@ -48,7 +62,8 @@ export default function Layout() {
 
         <nav className="p-4 space-y-1">
           {navigation.map((item) => {
-            const isActive = location.pathname === item.href;
+            // Check if current path starts with item.href to keep active state correct
+            const isActive = location.pathname.startsWith(item.href);
             return (
               <Link
                 key={item.name}
@@ -71,14 +86,44 @@ export default function Layout() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 border-b border-slate-800 flex items-center px-4 lg:hidden">
+        <header className="h-16 border-b border-slate-800 flex items-center px-4">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setIsSidebarOpen(true)}
+            className="lg:hidden"
           >
             <Menu className="h-5 w-5" />
           </Button>
+
+          <div className="ml-auto flex items-center gap-4">
+            {isAuthenticated && user && (
+              <span className="text-sm text-slate-400">
+                Hola, {user.username}
+              </span>
+            )}
+            {isAuthenticated ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLogout}
+                className="gap-2 hover:bg-red-500/10 hover:text-red-400"
+              >
+                <LogOut className="h-4 w-4" />
+                Cerrar Sesión
+              </Button>
+            ) : (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLogin}
+                className="gap-2"
+              >
+                <LogIn className="h-4 w-4" />
+                Iniciar Sesión
+              </Button>
+            )}
+          </div>
         </header>
 
         <main className="flex-1 p-4 lg:p-8 overflow-y-auto">
