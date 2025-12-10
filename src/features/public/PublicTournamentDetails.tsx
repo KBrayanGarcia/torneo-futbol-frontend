@@ -46,13 +46,13 @@ export default function PublicTournamentDetails() {
         Volver a Torneos
       </Button>
 
-      <div className="from-slate-900 to-slate-800 p-8 rounded-2xl border border-slate-700 shadow-2xl">
+      <div className="from-slate-900 to-slate-800 p-4 md:p-8 rounded-2xl border border-slate-700 shadow-2xl">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <h1 className="text-4xl font-black tracking-tight text-white mb-4">
+            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-white mb-4 break-words">
               {tournament.name}
             </h1>
-            <div className="flex flex-wrap gap-6 text-sm">
+            <div className="flex flex-wrap gap-4 md:gap-6 text-sm">
               <div className="flex items-center gap-2 text-amber-400 bg-amber-400/10 px-3 py-1 rounded-full">
                 <Trophy className="h-4 w-4" />
                 <span className="font-bold">
@@ -87,12 +87,12 @@ export default function PublicTournamentDetails() {
       </div>
 
       <div className="grid gap-8 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-6 min-w-0">
           <h2 className="text-2xl font-bold flex items-center gap-2">
             <span className="bg-indigo-500 w-1 h-6 rounded-full inline-block"></span>
             Partidos y Resultados
           </h2>
-          <div className="bg-slate-900/40 p-6 rounded-xl border border-slate-800">
+          <div className="bg-slate-900/40 p-4 md:p-6 rounded-xl border border-slate-800">
             <MatchList
               matches={tournamentMatches}
               teams={tournament.participants}
@@ -100,7 +100,7 @@ export default function PublicTournamentDetails() {
           </div>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-6 min-w-0">
           <h2 className="text-2xl font-bold flex items-center gap-2">
             <span className="bg-amber-500 w-1 h-6 rounded-full inline-block"></span>
             Tabla de Posiciones
