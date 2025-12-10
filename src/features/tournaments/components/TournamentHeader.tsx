@@ -1,22 +1,59 @@
-import { useNavigate } from 'react-router-dom';
-import { Button } from '../../../components/ui/button';
-import { Plus } from 'lucide-react';
+import { Trophy, Users, Calendar } from 'lucide-react';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { cn } from '../../../lib/utils';
+import { parseLocalDate } from '../../../lib/tournament-utils';
+import type { Tournament } from '../../../types';
 
-export const TournamentHeader = () => {
-  const navigate = useNavigate();
+interface TournamentHeaderProps {
+  tournament: Tournament | undefined;
+}
+
+export function TournamentHeader({ tournament }: TournamentHeaderProps) {
+  if (!tournament) return null;
 
   return (
-    <div className="flex items-center justify-between">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight text-white">
-          Torneos
+    <div>
+      <div className="flex items-center gap-3 mb-2">
+        <h2 className="text-3xl font-bold tracking-tight">
+          {tournament.name || 'Torneo sin nombre'}
         </h2>
-        <p className="text-slate-400">Gestiona tus ligas y copas.</p>
+        <div
+          className={cn(
+            'px-2 py-0.5 rounded text-xs font-bold text-white',
+            tournament.status === 'ACTIVE' ? 'bg-emerald-500' : 'bg-slate-500',
+          )}
+        >
+          {tournament.status === 'ACTIVE' ? 'En Curso' : 'Borrador'}
+        </div>
       </div>
-      <Button onClick={() => navigate('/admin/tournaments/new')}>
-        <Plus className="mr-2 h-4 w-4" />
-        Nuevo Torneo
-      </Button>
+      <div className="flex flex-wrap gap-4 text-sm text-slate-400">
+        <div className="flex items-center gap-2">
+          <Trophy className="h-4 w-4 text-amber-500" />
+          <span>{tournament.config?.type === 'CUP' ? 'Copa' : 'Liga'}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Users className="h-4 w-4 text-indigo-400" />
+          <span>
+            {tournament.config?.format} ({tournament.participants?.length || 0}{' '}
+            equipos)
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Calendar className="h-4 w-4 text-emerald-400" />
+          <span>
+            {tournament.config?.startDate
+              ? `Inicio: ${format(
+                  parseLocalDate(tournament.config.startDate),
+                  'd MMM',
+                  { locale: es },
+                )}`
+              : `Creado: ${format(new Date(tournament.createdAt), 'd MMM', {
+                  locale: es,
+                })}`}
+          </span>
+        </div>
+      </div>
     </div>
   );
-};
+}
