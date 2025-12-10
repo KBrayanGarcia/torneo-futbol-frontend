@@ -13,7 +13,7 @@ import MatchResultModal from './MatchResultModal';
 import { useParams } from 'react-router-dom';
 
 import { useTournamentDetails } from './hooks/useTournamentDetails';
-import { TournamentHeader } from './components/TournamentHeader';
+import { TournamentDetailsHeader } from './components/TournamentDetailsHeader';
 import { TournamentActions } from './components/TournamentActions';
 
 export default function TournamentDetails() {
@@ -56,7 +56,7 @@ export default function TournamentDetails() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <TournamentHeader tournament={tournament} />
+        <TournamentDetailsHeader tournament={tournament} />
 
         <TournamentActions
           matchCount={tournamentMatches.length}
