@@ -2,6 +2,13 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../lib/api';
 import type { Team } from '../types';
 
+// DTO shared with useTeamMutations
+interface CreateTeamDTO {
+  name: string;
+  isFixed: boolean;
+  playerIds: string[];
+}
+
 // TODO: Por cada acción hay que crear un hook personalizado propio
 export const useTeams = () => {
   const queryClient = useQueryClient();
@@ -19,7 +26,7 @@ export const useTeams = () => {
   });
 
   const createTeam = useMutation({
-    mutationFn: async (newTeam: Partial<Team>) => {
+    mutationFn: async (newTeam: CreateTeamDTO) => {
       const response = await api.post('/teams', newTeam);
       return response.data;
     },
@@ -29,7 +36,13 @@ export const useTeams = () => {
   });
 
   const updateTeam = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: Partial<Team> }) => {
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: Partial<CreateTeamDTO>;
+    }) => {
       const response = await api.patch(`/teams/${id}`, data);
       return response.data;
     },
