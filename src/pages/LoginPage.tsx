@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { FormEvent } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Lock, User } from 'lucide-react';
 
 export const LoginPage = () => {
@@ -12,12 +12,14 @@ export const LoginPage = () => {
 
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectUrl = searchParams.get('redirect') || '/admin';
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/admin', { replace: true });
+      navigate(redirectUrl, { replace: true });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, redirectUrl]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -26,7 +28,7 @@ export const LoginPage = () => {
 
     try {
       await login(username, password);
-      navigate('/admin');
+      navigate(redirectUrl, { replace: true });
     } catch {
       setError('Credenciales inválidas. Por favor, intenta de nuevo.');
     } finally {
